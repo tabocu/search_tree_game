@@ -16,6 +16,9 @@ public class Main {
 		State initialState = new State();
 		initialState.shuffle();
 		
+		System.out.println("Estado inicial:");
+		System.out.print(initialState);
+		
 		depthFirstSearch(initialState);
 		breadthFirstSearch(initialState);
 		uniformCostSearch(initialState);
