@@ -89,9 +89,9 @@ public final class Facade {
 			
 			@Override
 			public int compareTo(UniformCostItem o) {
-				int result = o.cost - cost;
+				int result = cost - o.cost;
 				if (result == 0)
-					return (int) (o.node.getId() - node.getId());
+					return (int) (node.getId() - o.node.getId());
 				else
 					return result;
 			}
