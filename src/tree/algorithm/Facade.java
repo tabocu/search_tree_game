@@ -9,12 +9,15 @@ import java.util.Set;
 import java.util.Stack;
 
 import tree.Tree;
+import tree.utils.Statistics;
 
 public final class Facade {
 	
 	private Facade() {}
 	
-	public static <T> Tree<T>.Node depthFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath) {
+	public static <T> Tree<T>.Node depthFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath, Statistics statistics) {
+		if (statistics != null) statistics.startTimer();
+		
 		if (resultPath != null)
 			resultPath.clear();
 		
@@ -24,20 +27,27 @@ public final class Facade {
 		Tree<T>.Node currentNode = null;
 		while (!nextNodes.empty()) {
 			currentNode = nextNodes.pop();
+			
+			if (statistics != null) statistics.incrementIteration();
+			
 			if ((endNodesId != null && endNodesId.contains(currentNode)) || 
 					(stopCondition != null && stopCondition.isFinal(currentNode))) {
 				if (resultPath != null)
 					getPath(currentNode,resultPath);
+				if (statistics != null) statistics.endTimer();
 				return currentNode;
 			}
 			
 			Iterator<Tree<T>.Node> it = currentNode.getChildren().descendingIterator();
 			while (it.hasNext()) nextNodes.add(it.next());
 		}
+		if (statistics != null) statistics.endTimer();
 		return null;
 	}
 	
-	public static <T> Tree<T>.Node breadthFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath) {
+	public static <T> Tree<T>.Node breadthFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath, Statistics statistics) {
+		if (statistics != null) statistics.startTimer();
+		
 		if (resultPath != null)
 			resultPath.clear();
 		
@@ -47,21 +57,26 @@ public final class Facade {
 		Tree<T>.Node currentNode = null;
 		while (!nextNodes.isEmpty()) {
 			currentNode = nextNodes.poll();
+			
+			if (statistics != null) statistics.incrementIteration();
+			
 			if ((endNodesId!= null && endNodesId.contains(currentNode)) || 
 					(stopCondition != null && stopCondition.isFinal(currentNode))) {
 				if (resultPath != null)
 					getPath(currentNode,resultPath);
+				if (statistics != null) statistics.endTimer();
 				return currentNode;
 			}
 			
 			Iterator<Tree<T>.Node> it = currentNode.getChildren().iterator();
 			while (it.hasNext()) nextNodes.add(it.next());
 		}
+		if (statistics != null) statistics.endTimer();
 		return null;
 	}
 	
-	public static <T extends WeightableG> Tree<T>.Node uniformCostSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath) {
-		
+	public static <T extends WeightableG> Tree<T>.Node uniformCostSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath, Statistics statistics) {
+		if (statistics != null) statistics.startTimer();
 		class UniformCostItem implements Comparable<UniformCostItem> {
 			
 			public UniformCostItem(Tree<T>.Node node, int cost) { 
@@ -90,10 +105,14 @@ public final class Facade {
 		while (!uniformCostList.isEmpty()) {
 			Collections.sort(uniformCostList);
 			UniformCostItem uniformCostItem = uniformCostList.poll();
+			
+			if (statistics != null) statistics.incrementIteration();
+			
 			if ((endNodesId != null && endNodesId.contains(uniformCostItem.node)) || 
 					(stopCondition != null && stopCondition.isFinal(uniformCostItem.node))) {
 				if (resultPath != null)
 					getPath(uniformCostItem.node,resultPath);
+				if (statistics != null) statistics.endTimer();
 				return uniformCostItem.node;
 			}
 			Set<Tree<T>.Node> nodeSet = uniformCostItem.node.getChildren();
@@ -101,10 +120,12 @@ public final class Facade {
 				uniformCostList.addLast(new UniformCostItem(node,node.getContent().getWeightG() + uniformCostItem.cost));
 			}
 		}
+		if (statistics != null) statistics.endTimer();
 		return null;
 	}
 	
-	public static <T extends WeightableH> Tree<T>.Node greedyBestFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath) {
+	public static <T extends WeightableH> Tree<T>.Node greedyBestFirstSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath, Statistics statistics) {
+		if (statistics != null) statistics.startTimer();
 		
 		if (resultPath != null)
 			resultPath.clear();
@@ -128,19 +149,25 @@ public final class Facade {
 			});
 
 			currentNode = nextNodes.poll();
+			
+			if (statistics != null) statistics.incrementIteration();
 				
 			if ((endNodesId!= null && endNodesId.contains(currentNode)) || 
 					(stopCondition != null && stopCondition.isFinal(currentNode))) {
 				if (resultPath != null)
 					getPath(currentNode,resultPath);
+				if (statistics != null) statistics.endTimer();
 				return currentNode;
 			}
 			nextNodes.addAll(currentNode.getChildren());
 		}
+		if (statistics != null) statistics.endTimer();
 		return null;
 	}
 	
-	public static <T extends WeightableF> Tree<T>.Node aStarSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath) {
+	public static <T extends WeightableF> Tree<T>.Node aStarSearch(Tree <T> tree, Set<Tree<T>.Node> endNodesId, Stopable<Tree<T>.Node> stopCondition, List<Tree<T>.Node> resultPath, Statistics statistics) {
+		if (statistics != null) statistics.startTimer();
+		
 		class AStarItem implements Comparable<AStarItem> {
 			
 			public AStarItem(Tree<T>.Node node, int cost) { 
@@ -169,10 +196,14 @@ public final class Facade {
 		while (!aStartList.isEmpty()) {
 			Collections.sort(aStartList);
 			AStarItem aStarItem = aStartList.poll();
+			
+			if (statistics != null) statistics.incrementIteration();
+			
 			if ((endNodesId!= null && endNodesId.contains(aStarItem.node)) || 
 					(stopCondition != null && stopCondition.isFinal(aStarItem.node))) {
 				if (resultPath != null)
 					getPath(aStarItem.node,resultPath);
+				if (statistics != null) statistics.endTimer();
 				return aStarItem.node;
 			}
 			Set<Tree<T>.Node> nodeSet = aStarItem.node.getChildren();
@@ -180,6 +211,7 @@ public final class Facade {
 				aStartList.addLast(new AStarItem(node,node.getContent().getWeightG() + aStarItem.cost));
 			}
 		}
+		if (statistics != null) statistics.endTimer();
 		return null;
 	}
 	

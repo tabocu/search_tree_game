@@ -45,7 +45,7 @@ public class FacadeTest {
 		endNodesId.add(nodeF);
 		
 		List<Tree<?>.Node> resultPath = new LinkedList<>();
-		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.depthFirstSearch(tree, endNodesId, null, resultPath);
+		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.depthFirstSearch(tree, endNodesId, null, resultPath, null);
 		
 		assertEquals(nodeId, nodeJ);
 		assertEquals(resultPath.get(0), nodeA);
@@ -86,7 +86,7 @@ public class FacadeTest {
 		endNodesId.add(nodeF);
 		
 		List<Tree<?>.Node> resultPath = new LinkedList<>();
-		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.breadthFirstSearch(tree, endNodesId, null, resultPath);
+		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.breadthFirstSearch(tree, endNodesId, null, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
@@ -128,7 +128,7 @@ public class FacadeTest {
 		endNodesId.add(nodeF);
 		
 		List<Tree<?>.Node> resultPath = new LinkedList<>();
-		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.uniformCostSearch(tree, endNodesId, null, resultPath);
+		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.uniformCostSearch(tree, endNodesId, null, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
@@ -169,7 +169,7 @@ public class FacadeTest {
 		endNodesId.add(nodeF);
 		
 		List<Tree<?>.Node> resultPath = new LinkedList<>();
-		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.greedyBestFirstSearch(tree, endNodesId, null, resultPath);
+		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.greedyBestFirstSearch(tree, endNodesId, null, resultPath, null);
 		
 		assertEquals(nodeId, nodeE);
 		assertEquals(resultPath.get(0), nodeA);
@@ -217,7 +217,7 @@ public class FacadeTest {
 		endNodesId.add(nodeF);
 		
 		List<Tree<?>.Node> resultPath = new LinkedList<>();
-		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.aStarSearch(tree, endNodesId, null, resultPath);
+		Tree<?>.Node nodeId = (Tree<?>.Node) Facade.aStarSearch(tree, endNodesId, null, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
@@ -262,7 +262,7 @@ public class FacadeTest {
 			public boolean isFinal(Tree<?>.Node t) {
 				return endNodesId.contains(t);
 			}
-		}, resultPath);
+		}, resultPath, null);
 		
 		assertEquals(nodeId, nodeJ);
 		assertEquals(resultPath.get(0), nodeA);
@@ -308,7 +308,7 @@ public class FacadeTest {
 			public boolean isFinal(Tree<?>.Node t) {
 				return endNodesId.contains(t);
 			}
-		}, resultPath);
+		}, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
@@ -355,7 +355,7 @@ public class FacadeTest {
 			public boolean isFinal(Tree<?>.Node t) {
 				return endNodesId.contains(t);
 			}
-		}, resultPath);
+		}, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
@@ -401,7 +401,7 @@ public class FacadeTest {
 			public boolean isFinal(Tree<?>.Node t) {
 				return endNodesId.contains(t);
 			}
-		}, resultPath);
+		}, resultPath, null);
 		
 		assertEquals(nodeId, nodeE);
 		assertEquals(resultPath.get(0), nodeA);
@@ -454,7 +454,7 @@ public class FacadeTest {
 			public boolean isFinal(Tree<?>.Node t) {
 				return endNodesId.contains(t);
 			}
-		}, resultPath);
+		}, resultPath, null);
 		
 		assertEquals(nodeId, nodeF);
 		assertEquals(resultPath.get(0), nodeA);
