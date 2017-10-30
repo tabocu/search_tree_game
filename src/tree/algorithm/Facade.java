@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -88,9 +89,9 @@ public final class Facade {
 			
 			@Override
 			public int compareTo(UniformCostItem o) {
-				int result = cost - o.cost;
+				int result = o.cost - cost;
 				if (result == 0)
-					return (int) (node.getId() - o.node.getId());
+					return (int) (o.node.getId() - node.getId());
 				else
 					return result;
 			}
@@ -99,12 +100,12 @@ public final class Facade {
 		if (resultPath != null)
 			resultPath.clear();
 		
-		LinkedList<UniformCostItem> uniformCostList = new LinkedList<>();
-		uniformCostList.addLast(new UniformCostItem(tree.getRoot(),tree.getRoot().getContent().getWeightG()));
+		PriorityQueue<UniformCostItem> uniformCostList = new PriorityQueue<>();
+		uniformCostList.offer(new UniformCostItem(tree.getRoot(),tree.getRoot().getContent().getWeightG()));
 		
+		UniformCostItem uniformCostItem;
 		while (!uniformCostList.isEmpty()) {
-			Collections.sort(uniformCostList);
-			UniformCostItem uniformCostItem = uniformCostList.poll();
+			uniformCostItem = uniformCostList.poll();
 			
 			if (statistics != null) statistics.incrementIteration();
 			
@@ -117,7 +118,7 @@ public final class Facade {
 			}
 			Set<Tree<T>.Node> nodeSet = uniformCostItem.node.getChildren();
 			for (Tree<T>.Node node : nodeSet) {
-				uniformCostList.addLast(new UniformCostItem(node,node.getContent().getWeightG() + uniformCostItem.cost));
+				uniformCostList.offer(new UniformCostItem(node,node.getContent().getWeightG() + uniformCostItem.cost));
 			}
 		}
 		if (statistics != null) statistics.endTimer();
