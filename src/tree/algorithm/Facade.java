@@ -1,6 +1,5 @@
 package tree.algorithm;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -131,23 +130,21 @@ public final class Facade {
 		if (resultPath != null)
 			resultPath.clear();
 		
-		LinkedList<Tree<T>.Node> nextNodes = new LinkedList<>();
-		nextNodes.push(tree.getRoot());
+		PriorityQueue<Tree<T>.Node> nextNodes = new PriorityQueue<>(new Comparator<Tree<T>.Node>() {
+			@Override
+			public int compare(Tree<T>.Node o1,
+					Tree<T>.Node o2) {
+				int result = o1.getContent().getWeightH() - o2.getContent().getWeightH();
+				if (result == 0)
+					return (int) (o1.getId() - o2.getId());
+				else
+					return result;
+			}	
+		});
+		nextNodes.offer(tree.getRoot());
 		
 		Tree<T>.Node currentNode = null;
 		while (!nextNodes.isEmpty()) {
-			
-			Collections.sort(nextNodes,new Comparator<Tree<T>.Node>() {
-				@Override
-				public int compare(Tree<T>.Node o1,
-						Tree<T>.Node o2) {
-					int result = o1.getContent().getWeightH() - o2.getContent().getWeightH();
-					if (result == 0)
-						return (int) (o1.getId() - o2.getId());
-					else
-						return result;
-				}	
-			});
 
 			currentNode = nextNodes.poll();
 			
@@ -191,11 +188,10 @@ public final class Facade {
 		if (resultPath != null)
 			resultPath.clear();
 		
-		LinkedList<AStarItem> aStartList = new LinkedList<>();
-		aStartList.addLast(new AStarItem(tree.getRoot(),tree.getRoot().getContent().getWeightG()));
+		PriorityQueue<AStarItem> aStartList = new PriorityQueue<>();
+		aStartList.offer(new AStarItem(tree.getRoot(),tree.getRoot().getContent().getWeightG()));
 		
 		while (!aStartList.isEmpty()) {
-			Collections.sort(aStartList);
 			AStarItem aStarItem = aStartList.poll();
 			
 			if (statistics != null) statistics.incrementIteration();
@@ -209,7 +205,7 @@ public final class Facade {
 			}
 			Set<Tree<T>.Node> nodeSet = aStarItem.node.getChildren();
 			for (Tree<T>.Node node : nodeSet) {
-				aStartList.addLast(new AStarItem(node,node.getContent().getWeightG() + aStarItem.cost));
+				aStartList.offer(new AStarItem(node,node.getContent().getWeightG() + aStarItem.cost));
 			}
 		}
 		if (statistics != null) statistics.endTimer();
