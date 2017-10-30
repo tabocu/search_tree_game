@@ -8,11 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class State implements WeightableF {
-	public static final String [][] SOLVED_STATE = {{"1", "2", "3"},
-			                                        {"8", " ", "4"},
-			                                        {"7", "6", "5"}};
+	public static final int [][] SOLVED_STATE = {{1, 2, 3},
+			                                     {4, 5, 6},
+			                                     {7, 8, 0}};
 	
-	private String [][] mCurrentState;
+	public static final int [] SOLVED_STATE_I;
+	public static final int [] SOLVED_STATE_J;
+	
+	static {
+		SOLVED_STATE_I = new int[9];
+		SOLVED_STATE_J = new int[9];
+		for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++) {
+				SOLVED_STATE_I[SOLVED_STATE[i][j]] = i;
+				SOLVED_STATE_J[SOLVED_STATE[i][j]] = j;
+			}		
+	}
+	
+	
+	private int [][] mCurrentState;
 	
 	private int mWeightG = 1;
 	private int mWeightH = -1;
@@ -25,15 +39,15 @@ public class State implements WeightableF {
 		this(s.mCurrentState);
 	}
 	
-	public State(String [][] currentState) {
-		mCurrentState = new String [3][3];
+	public State(int [][] currentState) {
+		mCurrentState = new int [3][3];
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
 				mCurrentState[i][j] = currentState[i][j];
 	}
 	
 	public void shuffle() {
-		int oldI = 1, oldJ = 1, newI, newJ;
+		int oldI = SOLVED_STATE_I[0], oldJ = SOLVED_STATE_J[0], newI, newJ;
 		for (int x = 0; x < 1000; x++) {
 			newI = ThreadLocalRandom.current().nextInt(0, 3);
 			newJ = ThreadLocalRandom.current().nextInt(0, 3);
@@ -51,7 +65,7 @@ public class State implements WeightableF {
 		int xI = 0, xJ = 0;
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				if (mCurrentState[i][j] == " ") {
+				if (mCurrentState[i][j] == 0) {
 					xI = i;
 					xJ = j;
 				}
@@ -114,13 +128,20 @@ public class State implements WeightableF {
 	
 	@Override
 	public String toString() {
-		return mCurrentState[0][0] + " " + mCurrentState[0][1] + " " + mCurrentState[0][2] + "\n" +
-			   mCurrentState[1][0] + " " + mCurrentState[1][1] + " " + mCurrentState[1][2] + "\n" +
-			   mCurrentState[2][0] + " " + mCurrentState[2][1] + " " + mCurrentState[2][2] + "\n";
+		return toString(0,0) + " " + toString(0,1) + " " + toString(0,2) + "\n" +
+			   toString(1,0) + " " + toString(1,1) + " " + toString(1,2) + "\n" +
+			   toString(2,0) + " " + toString(2,1) + " " + toString(2,2) + "\n";
+	}
+	
+	public String toString(int i, int j) {
+		if (mCurrentState[i][j] == 0)
+			return " ";
+		else
+			return "" + mCurrentState[i][j];
 	}
 	
 	public void swap(int oldI, int oldJ, int newI, int newJ) { 
-		String piece = mCurrentState[oldI][oldJ];
+		int piece = mCurrentState[oldI][oldJ];
 		mCurrentState[oldI][oldJ] = mCurrentState[newI][newJ];
 		mCurrentState[newI][newJ] = piece;
 	}
@@ -138,35 +159,9 @@ public class State implements WeightableF {
 		mWeightH = 0;
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				switch (mCurrentState[i][j]) {
-					case "1":
-						mWeightH += Math.abs(i - 0) + Math.abs(j - 0);
-						break;
-					case "2":
-						mWeightH += Math.abs(i - 0) + Math.abs(j - 1);
-						break;
-					case "3":
-						mWeightH += Math.abs(i - 0) + Math.abs(j - 2);
-						break;
-					case "4":
-						mWeightH += Math.abs(i - 1) + Math.abs(j - 2);
-						break;
-					case "5":
-						mWeightH += Math.abs(i - 2) + Math.abs(j - 2);
-						break;
-					case "6":
-						mWeightH += Math.abs(i - 2) + Math.abs(j - 1);
-						break;
-					case "7":
-						mWeightH += Math.abs(i - 2) + Math.abs(j - 0);
-						break;
-					case "8":
-						mWeightH += Math.abs(i - 1) + Math.abs(j - 0);
-						break;
-				}
+				mWeightH += Math.abs(i - SOLVED_STATE_I[mCurrentState[i][j]]) + Math.abs(j - SOLVED_STATE_J[mCurrentState[i][j]]);
 			}
 		}
-		
 		return mWeightH;
 	}
 	
@@ -175,13 +170,8 @@ public class State implements WeightableF {
 		int serial = 0;
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) {
-				if (mCurrentState[i][j] == " ")
-					serial += 9;
-				else
-					serial += mCurrentState[i][j].charAt(0) - '0';
-				
-				if (i != 2 || j != 2)
-					serial *= 10;
+				serial *= 10;
+				serial += mCurrentState[i][j];	
 			}
 		
 		return serial;
